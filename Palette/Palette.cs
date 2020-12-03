@@ -35,16 +35,16 @@ namespace Palette
 
         private readonly List<Swatch> mSwatches;
         private readonly List<Target> mTargets;
-        private readonly Dictionary<Target, Swatch> mSelectedSwatches;
+        private readonly Dictionary<Target, Swatch?> mSelectedSwatches;
         private readonly Dictionary<int, bool> mUsedColors;
-        private readonly Swatch mDominantSwatch;
+        private readonly Swatch? mDominantSwatch;
 
         Palette(List<Swatch> swatches, List<Target> targets)
         {
             mSwatches = swatches;
             mTargets = targets;
             mUsedColors = new Dictionary<int, bool>();
-            mSelectedSwatches = new Dictionary<Target, Swatch>();
+            mSelectedSwatches = new Dictionary<Target, Swatch?>();
             mDominantSwatch = FindDominantSwatch();
         }
 
@@ -64,62 +64,62 @@ namespace Palette
             return new ReadOnlyCollection<Target>(mTargets);
         }
 
-        public Swatch GetVibrantSwatch()
+        public Swatch? GetVibrantSwatch()
         {
             return GetSwatchForTarget(Target.VIBRANT);
         }
 
-        public Swatch GetLightVibrantSwatch()
+        public Swatch? GetLightVibrantSwatch()
         {
             return GetSwatchForTarget(Target.LIGHT_VIBRANT);
         }
 
-        public Swatch GetDarkVibrantSwatch()
+        public Swatch? GetDarkVibrantSwatch()
         {
             return GetSwatchForTarget(Target.DARK_VIBRANT);
         }
 
-        public Swatch GetMutedSwatch()
+        public Swatch? GetMutedSwatch()
         {
             return GetSwatchForTarget(Target.MUTED);
         }
 
-        public Swatch GetLightMutedSwatch()
+        public Swatch? GetLightMutedSwatch()
         {
             return GetSwatchForTarget(Target.LIGHT_MUTED);
         }
 
-        public Swatch GetDarkMutedSwatch()
+        public Swatch? GetDarkMutedSwatch()
         {
             return GetSwatchForTarget(Target.DARK_MUTED);
         }
 
-        public int GetVibrantColor(int defaultColor)
+        public int? GetVibrantColor(int? defaultColor = null)
         {
             return GetColorForTarget(Target.VIBRANT, defaultColor);
         }
 
-        public int GetLightVibrantColor(int defaultColor)
+        public int? GetLightVibrantColor(int? defaultColor = null)
         {
             return GetColorForTarget(Target.LIGHT_VIBRANT, defaultColor);
         }
 
-        public int GetDarkVibrantColor(int defaultColor)
+        public int? GetDarkVibrantColor(int? defaultColor = null)
         {
             return GetColorForTarget(Target.DARK_VIBRANT, defaultColor);
         }
 
-        public int GetMutedColor(int defaultColor)
+        public int? GetMutedColor(int? defaultColor = null)
         {
             return GetColorForTarget(Target.MUTED, defaultColor);
         }
 
-        public int GetLightMutedColor(int defaultColor)
+        public int? GetLightMutedColor(int? defaultColor = null)
         {
             return GetColorForTarget(Target.LIGHT_MUTED, defaultColor);
         }
 
-        public int GetDarkMutedColor(int defaultColor)
+        public int? GetDarkMutedColor(int? defaultColor = null)
         {
             return GetColorForTarget(Target.DARK_MUTED, defaultColor);
         }
@@ -128,18 +128,19 @@ namespace Palette
         /// Returns the selected swatch for the given target from the palette, or null if one
         /// could not be found.
         /// </summary>
-        public Swatch GetSwatchForTarget(Target target)
+        public Swatch? GetSwatchForTarget(Target target)
         {
-            return mSelectedSwatches[target];
+            mSelectedSwatches.TryGetValue(target, out var swatch);
+            return swatch;
         }
 
         /// <summary>
         /// Returns the selected color for the given target from the palette as an RGB packed int.
         /// </summary>
         /// <param name="defaultColor">value to return if the swatch isn't available</param>
-        public int GetColorForTarget(Target target, int defaultColor)
+        public int? GetColorForTarget(Target target, int? defaultColor = null)
         {
-            Swatch swatch = GetSwatchForTarget(target);
+            Swatch? swatch = GetSwatchForTarget(target);
             return swatch != null ? swatch.GetRgb() : defaultColor;
         }
 
@@ -148,7 +149,7 @@ namespace Palette
         /// <para>The dominant swatch is defined as the swatch with the greatest population (frequency)
         /// within the palette.</para>
         /// </summary>
-        public Swatch GetDominantSwatch()
+        public Swatch? GetDominantSwatch()
         {
             return mDominantSwatch;
         }
@@ -158,9 +159,9 @@ namespace Palette
         /// <para><seealso cref="GetDominantSwatch"/></para>
         /// </summary>
         /// <param name="defaultColor">value to return if the swatch isn't available</param>
-        public int GetDominantColor(int defaultColor)
+        public int? GetDominantColor(int? defaultColor = null)
         {
-            return mDominantSwatch != null ? mDominantSwatch.GetRgb() : defaultColor;
+            return mDominantSwatch?.GetRgb() ?? defaultColor;
         }
 
         void Generate()
@@ -177,9 +178,9 @@ namespace Palette
             mUsedColors.Clear();
         }
 
-        private Swatch GenerateScoredTarget(Target target)
+        private Swatch? GenerateScoredTarget(Target target)
         {
-            Swatch maxScoreSwatch = GetMaxScoredSwatchForTarget(target);
+            Swatch? maxScoreSwatch = GetMaxScoredSwatchForTarget(target);
             if (maxScoreSwatch != null && target.IsExclusive)
             {
                 // If we have a swatch, and the target is exclusive, add the color to the used list
@@ -188,10 +189,10 @@ namespace Palette
             return maxScoreSwatch;
         }
 
-        private Swatch GetMaxScoredSwatchForTarget(Target target)
+        private Swatch? GetMaxScoredSwatchForTarget(Target target)
         {
             float maxScore = 0;
-            Swatch maxScoreSwatch = null;
+            Swatch? maxScoreSwatch = null;
             for (int i = 0, count = mSwatches.Count; i < count; i++)
             {
                 Swatch swatch = mSwatches[i];
@@ -244,10 +245,10 @@ namespace Palette
             return saturationScore + luminanceScore + populationScore;
         }
 
-        private Swatch FindDominantSwatch()
+        private Swatch? FindDominantSwatch()
         {
             int maxPop = int.MinValue;
-            Swatch maxSwatch = null;
+            Swatch? maxSwatch = null;
             for (int i = 0, count = mSwatches.Count; i < count; i++)
             {
                 Swatch swatch = mSwatches[i];
@@ -272,7 +273,7 @@ namespace Palette
             private bool GeneratedTextColors;
             private int TitleTextColor;
             private int BodyTextColor;
-            private float[] Hsl;
+            private float[]? Hsl;
             public Swatch(int color, int population)
             {
                 Red = ColorUtils.Red(color);
@@ -288,6 +289,12 @@ namespace Palette
             {
                 return Rgb;
             }
+
+            public string GetHex()
+            {
+                return "#" + GetRgb().ToString("X").Substring(2);
+            }
+            
             /**
              * Return this swatch's HSL values.
              *     hsv[0] is Hue [0 .. 360)
@@ -405,8 +412,8 @@ namespace Palette
 
         public sealed class Builder
         {
-            private readonly List<Swatch> swatches;
-            private readonly NetVips.Image image;
+            private readonly List<Swatch>? swatches;
+            private readonly NetVips.Image? image;
             private readonly List<Target> targets = new List<Target>();
 
             private int maxColors = DEFAULT_CALCULATE_NUMBER_COLORS;

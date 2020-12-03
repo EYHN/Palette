@@ -15,7 +15,7 @@ namespace Palette
         readonly int[] mColors;
         readonly int[] mHistogram;
         readonly List<Palette.Swatch> mQuantizedColors;
-        readonly Palette.Filter[] mFilters;
+        readonly Palette.Filter[]? mFilters;
         private readonly float[] mTempHsl = new float[3];
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Palette
         /// <param name="pixels">histogram representing an image's pixel data</param>
         /// <param name="maxColors">The maximum number of colors that should be in the result palette.</param>
         /// <param name="filters">Set of filters to use in the quantization stage</param>
-        internal ColorCutQuantizer(int[] pixels, int maxColors, Palette.Filter[] filters)
+        internal ColorCutQuantizer(int[] pixels, int maxColors, Palette.Filter[]? filters)
         {
             mFilters = filters;
             int[] hist = mHistogram = new int[1 << (QUANTIZE_WORD_WIDTH * 3)];

@@ -7,7 +7,7 @@ namespace Palette
     public class ColorUtils
     {
         [ThreadStatic]
-        private static double[] TEMP_ARRAY;
+        private static double[]? TEMP_ARRAY;
 
         public const int BLACK = unchecked((int)0xFF000000);
         public const int DKGRAY = unchecked((int)0xFF444444);
@@ -325,7 +325,7 @@ namespace Palette
 
         private static double[] getTempDouble3Array()
         {
-            double[] result = TEMP_ARRAY;
+            double[]? result = TEMP_ARRAY;
             if (result == null)
             {
                 result = new double[3];

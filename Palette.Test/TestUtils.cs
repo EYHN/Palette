@@ -46,7 +46,7 @@ namespace Palette.Test
 
         public static string GetApplicationRoot()
         {
-            return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
         }
     }
 }
