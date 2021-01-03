@@ -389,7 +389,7 @@ namespace Palette
                         .Append(']').ToString();
             }
 
-            public override bool Equals(object o)
+            public override bool Equals(object? o)
             {
                 if (this == o)
                 {

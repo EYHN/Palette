@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Palette
 {
-    public class ColorUtils
+    internal class ColorUtils
     {
         [ThreadStatic]
         private static double[]? TEMP_ARRAY;

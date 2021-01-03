@@ -326,7 +326,7 @@ namespace Palette
                 return new Palette.Swatch(approximateToRgb888(redMean, greenMean, blueMean), totalPopulation);
             }
 
-            public int CompareTo(Vbox other)
+            public int CompareTo(Vbox? other)
             {
                 if (other == null) return 1;
 
